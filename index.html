@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reiseziel-Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#27B3B0;--card:#FFFDF7;--ink:#1D1D3B;--red:#FF5A47;--yel:#FFD23F;--pink:#FF9EC4;--lil:#B79CFF;--sky:#6EC1FF;--mint:#7EE0B0;--out:#1D1D3B;--on:#1D1D3B;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16224A;--card:#26346B;--ink:#FFF8E8;--out:#0A1128}}
+:root[data-theme="dark"]{--bg:#16224A;--card:#26346B;--ink:#FFF8E8;--out:#0A1128}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Fredoka,"Trebuchet MS",system-ui,sans-serif;font-size:1.08rem;line-height:1.45;min-height:100vh;overflow-x:hidden}
+main{max-width:640px;margin:0 auto;padding:18px 16px 56px;position:relative}
+.sun{position:absolute;right:-70px;top:-50px;width:230px;height:230px;pointer-events:none}
+.sun g{transform-origin:100px 100px;animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+section{position:relative}
+h1,.dest{font-family:"Bowlby One",Impact,sans-serif;font-weight:400;line-height:1.02;margin:0 0 14px}
+h1{font-size:clamp(2.2rem,10vw,3.5rem);color:var(--yel);-webkit-text-stroke:2px var(--out);paint-order:stroke fill;text-shadow:3px 3px 0 var(--out);margin-top:70px}
+h2{font-size:1.4rem;line-height:1.25;margin:0 0 14px;font-weight:600}
+h3{font-size:1.1rem;margin:18px 0 6px}
+p{margin:0 0 12px;max-width:58ch}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+button:focus-visible{outline:4px solid var(--yel);outline-offset:3px}
+.big{background:var(--red);color:#fff;border:3px solid var(--out);border-radius:999px;padding:12px 28px;font-weight:600;font-size:1.2rem;box-shadow:5px 5px 0 var(--out)}
+.big:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--out)}
+.intro,.note{color:#fff;font-weight:500;text-shadow:1px 1px 0 var(--out)}
+.panel{background:var(--card);border:3px solid var(--out);border-radius:22px;padding:20px 18px;box-shadow:7px 7px 0 var(--out)}
+.opts{display:grid;gap:11px}
+.opt{text-align:left;border:3px solid var(--out);border-radius:16px;padding:11px 16px;font-weight:500;background:var(--yel);color:var(--on);box-shadow:4px 4px 0 var(--out)}
+.opt:nth-child(4n+2){background:var(--pink)}.opt:nth-child(4n+3){background:var(--mint)}.opt:nth-child(4n){background:var(--sky)}.opt:nth-child(5){background:var(--lil)}
+.opt:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--out)}
+.segs{display:flex;gap:3px;margin-bottom:12px}
+.segs i{flex:1;height:12px;border:2px solid var(--out);border-radius:6px;background:var(--card)}
+.segs i.on{background:var(--red)}
+.tag{display:inline-block;background:var(--lil);color:var(--on);border:2px solid var(--out);border-radius:999px;padding:1px 12px;font-size:.92rem;font-weight:600;margin-bottom:10px}
+.post{border:3px solid var(--out);border-radius:18px;overflow:hidden;box-shadow:8px 8px 0 var(--out);background:var(--card);transform:rotate(-1deg);animation:land .5s ease-out}
+@keyframes land{from{transform:rotate(-6deg) translateY(30px);opacity:0}}
+.hd{background:var(--bg2,var(--pink));color:var(--on);padding:16px 18px;border-bottom:3px solid var(--out);display:flex;gap:12px;align-items:center;justify-content:space-between}
+.land{margin:0;font-weight:600}
+.dest{font-size:clamp(1.6rem,7.5vw,2.5rem);margin:0}
+.emo{font-size:3rem;line-height:1;flex:none;transform:rotate(8deg)}
+.bd{padding:16px 18px}
+.stamp{float:right;margin:0 0 8px 12px;width:86px;height:86px;border:3px dashed var(--red);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:600;line-height:1.05;font-size:.72rem;color:var(--red);transform:rotate(10deg)}
+.stamp b{font-size:1.5rem}
+.warn{background:var(--yel);color:var(--on);border:2px solid var(--out);border-radius:12px;padding:8px 12px;margin:0 0 8px;font-size:.98rem}
+.pr{display:grid;grid-template-columns:118px 1fr;gap:8px;align-items:center;font-size:.95rem;margin-bottom:5px}
+.tr{position:relative;height:14px;border:2px solid var(--out);border-radius:8px;background:var(--card)}
+.tr i{position:absolute;left:0;top:0;bottom:0;background:var(--red);border-radius:5px}
+.tr u{position:absolute;top:-5px;bottom:-5px;width:4px;background:var(--out);text-decoration:none;border-radius:2px}
+.tp{margin:0 0 12px;padding-left:20px}.tp li{margin-bottom:4px}.lks{display:flex;flex-wrap:wrap;gap:10px}.lk{display:inline-block;background:var(--yel);color:var(--on);border:3px solid var(--out);border-radius:999px;padding:6px 16px;font-weight:600;text-decoration:none;box-shadow:3px 3px 0 var(--out);font-size:.95rem}.leg{font-size:.88rem;opacity:.8}
+.box{background:var(--card);border:3px solid var(--out);border-radius:16px;padding:12px 14px;margin-bottom:12px;box-shadow:4px 4px 0 var(--out)}
+.rk{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center}
+.rk .emo{font-size:1.9rem;transform:none}
+.rk b{font-family:"Bowlby One",Impact,sans-serif;font-weight:400;font-size:1.02rem;display:block}
+.rk span{font-size:.92rem}
+.pct{font-weight:600;font-size:1.2rem;color:var(--red)}
+@media (prefers-reduced-motion:reduce){.sun g,.post{animation:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<svg class="sun" viewBox="0 0 200 200" aria-hidden="true"><g fill="#FFD23F" stroke="#1D1D3B" stroke-width="3"><path id="r" d="M100 8 L110 40 L90 40Z"/><use href="#r" transform="rotate(45 100 100)"/><use href="#r" transform="rotate(90 100 100)"/><use href="#r" transform="rotate(135 100 100)"/><use href="#r" transform="rotate(180 100 100)"/><use href="#r" transform="rotate(225 100 100)"/><use href="#r" transform="rotate(270 100 100)"/><use href="#r" transform="rotate(315 100 100)"/></g><circle cx="100" cy="100" r="44" fill="#FF9EC4" stroke="#1D1D3B" stroke-width="3"/></svg>
+
+<section id="start">
+  <h1>Wohin geht's als Nächstes?</h1>
+  <p class="intro">16 Fragen zu Reisemonat, Budget, Dauer, Anreise und Reisestil. 66 Städte und Regionen in Europa werden mit deinem Profil verglichen. Du bekommst dein Top-Ziel, eine Profil-Auswertung, Hinweise zu Schwachstellen und eine Rangliste.</p>
+  <button class="big" id="go">Los geht's!</button>
+</section>
+
+<section id="quiz" hidden>
+  <div class="segs" id="segs"></div>
+  <div class="panel">
+    <span class="tag" id="tag"></span>
+    <h2 id="q"></h2>
+    <div class="opts" id="opts"></div>
+  </div>
+</section>
+
+<section id="result" hidden>
+  <p class="intro" id="rProf"></p>
+  <div id="tops"></div>
+  <h2 style="color:#fff;text-shadow:2px 2px 0 var(--out);margin-top:28px">Weitere Treffer</h2>
+  <div id="alts"></div>
+  <button class="big" id="again">Nochmal spielen</button>
+  <p class="note" style="margin-top:22px">Die Empfehlung beruht auf festen Regeln und von Hand geschätzten Werten. Die Prozentzahl ist eine kalibrierte Skala von 71 bis 99 und keine echte Wahrscheinlichkeit. Aktuelle Preise, Flüge und Wetter kennt das Quiz nicht, bitte vor der Buchung selbst prüfen.</p>
+</section>
+</main>
+
+<script>
+const Y="#FFD23F",P="#FF9EC4",R="#FF5A47",L="#B79CFF",M="#7EE0B0",S="#6EC1FF";
+const DIM=["Sonne & Strand","Stadt & Kultur","Natur","Aktivität","Essen","Nachtleben","Ruhe"];
+const MN=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const K={s:0,t:1,na:2,a:3,e:4,p:5,r:6};
+// [Name, Region, Emoji, Farbe, [Sonne,Stadt,Natur,Aktiv,Essen,Nacht,Ruhe], Preisstufe 1-4, Anreise 1-3, Mindesttage, Monat von, bis, Geheimtipp 0-3, Kurztext, Tipp]
+const D=[
+["Lissabon","Portugal",   "🚋",Y,[2,3,1,1,3,2,1],2,3,3,2,11,1,"Hügelige Altstadt, Fado, Fisch und Strand in Reichweite.","Pastel de Nata probieren und mit der Bahn nach Cascais ans Meer."],
+["Porto & Douro-Tal","Portugal","🍷",R,[1,3,2,1,3,2,2],2,3,3,3,10,1,"Portwein, bunte Ufergassen und Weinberge im Flusstal.","Eine Bootsfahrt ins Douro-Tal mit Weinprobe einplanen."],
+["Algarve","Portugal",     "🏝️",S,[3,1,2,2,2,1,2],2,3,5,5,10,1,"Felsbuchten, goldene Strände und Küstenwanderwege.","Der Wanderweg bei Lagos bietet die schönsten Klippen."],
+["Barcelona","Katalonien",  "🏖️",P,[3,3,0,1,3,3,0],3,3,3,5,10,0,"Stadt, Strand und Tapas, dazu Gaudí-Architektur.","Park Güell früh am Morgen besuchen, dann ist es leer."],
+["Sevilla","Andalusien",   "💃",R,[2,3,0,0,3,2,1],2,3,3,2,6,1,"Orangenbäume, Flamenco und maurische Paläste.","Im Sommer zu heiß, Frühling ist ideal."],
+["Mallorca, Serra de Tramuntana","Balearen","🌊",M,[3,1,3,3,2,1,2],2,2,4,4,10,1,"Bergdörfer, Wanderwege und türkisfarbene Buchten.","Der Weg von Deià nach Sóller verbindet Berg und Meer."],
+["Valencia","Spanien",    "🥘",Y,[3,2,1,1,3,2,1],2,3,3,3,10,2,"Paella-Heimat mit Stadtstrand und moderner Architektur.","Mit dem Rad durch den alten Flusspark Turia fahren."],
+["Rom","Latium",         "🏛️",R,[2,3,0,0,3,2,0],3,2,3,1,12,0,"Antike, Barock und Pasta an jeder Ecke.","Sehenswürdigkeiten früh am Morgen besuchen."],
+["Florenz & Toskana","Italien","🍝",Y,[1,3,2,1,3,1,2],3,2,4,4,10,0,"Renaissance-Kunst, Hügel, Wein und Olivenöl.","Mit dem Mietwagen Hügelstädte wie San Gimignano ansteuern."],
+["Palermo & Sizilien","Sizilien","🌋",S,[3,2,2,1,3,2,1],2,3,5,4,10,2,"Märkte, Barock, Arancini und der Ätna als Kulisse.","Straßenessen auf dem Markt Ballarò probieren."],
+["Dolomiten","Südtirol",   "⛰️",M,[1,0,3,3,2,0,2],2,1,4,1,12,1,"Steile Felswände, Almen und gutes Essen. Im Winter Ski, im Sommer Wandern.","Seiser Alm und Drei Zinnen früh am Tag besuchen."],
+["Cinque Terre","Ligurien","🍋",Y,[2,1,2,2,2,0,1],3,2,3,4,10,1,"Fünf bunte Dörfer an Klippen, verbunden durch Wanderwege.","Zwischen den Dörfern den Zug nutzen, wenn Wege gesperrt sind."],
+["Venedig","Venetien",    "🛶",L,[0,3,0,0,2,1,1],4,2,2,4,10,0,"Kanäle, Brücken und Gassen ohne Autos.","Übernachte in Mestre oder auf Burano, das spart Geld."],
+["Split & Dalmatien","Kroatien","⛵",S,[3,2,2,2,2,2,1],2,2,5,5,9,0,"Römischer Palast, klares Wasser und Inselhüpfen.","Mit der Fähre nach Hvar oder Brač."],
+["Istrien","Kroatien",   "🫒",M,[2,1,2,2,3,0,3],2,1,4,5,10,2,"Trüffel, Olivenöl und Hügeldörfer am Meer.","Ein Ausflug nach Rovinj lohnt sich schon bei kurzer Reise."],
+["Prag","Böhmen",        "🏰",L,[0,3,0,0,2,3,0],1,1,2,4,12,0,"Altstadt, Burg und viel Bier zu fairen Preisen.","Abends über die Karlsbrücke gehen, wenn weniger los ist."],
+["Budapest","Ungarn",    "♨️",M,[1,3,0,0,2,3,0],1,1,3,4,12,1,"Thermalbäder, Burgviertel und Ruinenbars.","Ein Thermalbad als Pause nach einem Stadttag einplanen."],
+["Wien","Österreich",    "🎻",P,[0,3,1,0,3,1,1],2,1,3,4,12,0,"Kaffeehäuser, Museen und Musik.","Vormittags ins Kaffeehaus, nachmittags ins Museum."],
+["Krakau","Kleinpolen",  "🕯️",Y,[0,3,0,0,2,2,1],1,1,3,4,12,1,"Mittelalterlicher Marktplatz, Geschichte und viel Preisvorteil.","Ein Tagesausflug führt in die Salzmine Wieliczka."],
+["Amsterdam","Nordholland","🚲",S,[0,3,1,2,1,3,0],3,1,3,4,9,0,"Grachten, Museen und Fahrräder überall.","Mit dem Rad bis zu den Poldern hinausfahren."],
+["Kopenhagen","Dänemark","🧜",P,[0,3,1,2,3,2,1],4,1,3,5,9,1,"Design, Hafenbäder und neue nordische Küche.","Im Hafen baden, das geht im Sommer mitten in der Stadt."],
+["Island, Südküste","Island","🧊",S,[0,0,3,3,0,0,3],4,3,5,6,9,1,"Wasserfälle, Gletscher und heiße Quellen.","Regenjacke, Wetterwechsel und hohe Preise einplanen."],
+["Lofoten","Norwegen",   "🐟",L,[0,0,3,3,1,0,3],4,3,5,6,9,3,"Steile Berge direkt am Meer und rote Fischerhäuser.","Im Sommer wird es nie ganz dunkel, im Winter gibt es Polarlicht."],
+["Schottische Highlands","Schottland","🥃",M,[0,1,3,3,1,1,3],3,2,5,5,9,2,"Seen, Berge und Whisky-Destillerien.","Mit dem Auto die Strecke durch Glencoe fahren."],
+["Edinburgh","Schottland","🎭",R,[0,3,1,1,2,3,0],3,2,3,5,9,1,"Burg, Altstadtgassen und Pubs, im August Festival.","Auf den Arthur's Seat steigen, das dauert nur eine Stunde."],
+["Kreta","Griechenland",  "🏺",Y,[3,2,3,2,3,1,2],2,3,6,5,10,1,"Schluchten, Strände und eine Küche aus Olivenöl und Gemüse.","Die Samaria-Schlucht gehört zu den bekanntesten Wanderungen."],
+["Athen","Attika",       "🦉",S,[2,3,1,1,3,2,0],2,2,3,3,11,1,"Akropolis, Gassen im Viertel Plaka und Tavernen.","Dachterrassen bieten abends den besten Blick auf die Akropolis."],
+["Salzburger Land","Österreich","🎿",L,[1,2,3,3,2,1,2],3,1,3,1,12,1,"Seen und Berge, im Sommer Wandern und im Winter Ski.","Die Altstadt von Salzburg lässt sich gut mit Natur kombinieren."],
+["Provence","Frankreich", "🌻",P,[1,2,3,2,3,0,3],3,1,4,5,9,2,"Lavendelfelder, Märkte und kleine Bergdörfer.","Lavendel blüht meist im Juni und Juli."],
+["Paris","Île-de-France","🥐",Y,[0,3,0,0,3,2,0],4,1,3,4,10,0,"Museen, Cafés und Spaziergänge an der Seine.","Mit dem Zug aus Westdeutschland oft in wenigen Stunden erreichbar."],
+["Rügen","Mecklenburg-Vorpommern","🐚",M,[2,0,3,2,1,0,3],2,1,3,5,9,2,"Kreidefelsen, lange Strände und Fischbrötchen.","Mit dem Rad auf der Insel zu fahren, ist ein guter Plan."],
+["Tallinn","Estland",    "🧣",P,[0,3,1,1,2,2,1],1,2,3,5,9,3,"Mittelalterliche Altstadt, Cafés und kurze Wege.","Im Winter gibt es einen gemütlichen Weihnachtsmarkt."],
+["Ljubljana & Bled","Slowenien","🦢",S,[0,2,3,3,2,1,2],2,1,3,5,10,3,"Kleine Hauptstadt, Alpensee und viel Natur für wenig Geld.","Der Bleder See ist ein guter Ausflug von Ljubljana aus."]
+,["Madrid","Spanien","🐻",R,[1,3,0,0,3,3,0],3,3,3,3,11,0,"Große Museen, Tapas-Bars und lange Nächte.","Der Prado und der Retiro-Park lassen sich gut kombinieren."],
+["Granada","Andalusien","🕌",Y,[1,3,1,1,2,2,1],2,3,3,3,11,1,"Alhambra, Tapas gratis zum Getränk und Blick auf die Sierra Nevada.","Alhambra-Tickets früh im Voraus buchen."],
+["San Sebastián","Baskenland","🍢",P,[2,2,1,1,3,2,1],3,3,3,5,9,1,"Pintxos-Bars, Stadtstrand und grüne Hügel.","Von Bar zu Bar ziehen und jeweils nur eine Kleinigkeit essen."],
+["Málaga & Costa del Sol","Andalusien","☀️",Y,[3,2,1,1,3,2,1],2,3,4,1,12,0,"Fast ganzjährig mild, mit Strand, Altstadt und Picasso-Museum.","Auch im Winter oft angenehm warm."],
+["Teneriffa","Kanaren","🌋",S,[3,0,3,3,2,1,2],2,3,5,1,12,1,"Ganzjährig mild, mit Vulkan Teide und Lavastränden.","Den Teide bei Sonnenaufgang oder Sonnenuntergang besuchen."],
+["Madeira","Portugal","🌺",M,[2,1,3,3,2,0,3],2,3,5,1,12,2,"Levada-Wanderwege, Blumen und Steilküsten das ganze Jahr.","Levadas früh am Morgen laufen, dann ist weniger los."],
+["Neapel & Amalfiküste","Kampanien","🍕",R,[2,3,2,1,3,2,1],3,2,4,4,10,0,"Pizza-Heimat, Vesuv, Pompeji und Küstenstraßen.","Pompeji früh am Tag besuchen, später wird es heiß."],
+["Mailand & Comer See","Lombardei","👗",L,[0,3,2,1,3,3,1],3,1,3,4,10,0,"Mode, Dom und Aperitivo, dazu ein See mit Bergkulisse.","Einen Tagesausflug mit der Fähre nach Bellagio planen."],
+["Bologna & Emilia-Romagna","Italien","🧀",Y,[1,3,0,1,3,2,1],2,2,3,1,12,2,"Beste Küche Italiens: Tortellini, Parmesan und Balsamico.","Unter den Arkaden spazieren und Tagliatelle al ragù essen."],
+["Verona & Gardasee","Venetien","🍷",P,[2,2,2,2,3,1,2],2,1,3,5,10,1,"Altstadt mit Arena, See zum Baden und Weinhügel.","Mit dem Rad oder Boot rund um den Gardasee."],
+["Bari & Apulien","Italien","🫒",S,[3,2,1,1,3,1,2],2,2,4,5,10,2,"Weiße Städte, Olivenhaine und Meer.","Alberobello und Polignano a Mare als Ausflüge einplanen."],
+["Sardinien","Italien","🏝️",S,[3,0,2,2,2,1,2],3,2,5,5,10,1,"Türkise Buchten, Felsküste und stille Orte im Hinterland.","Mit dem Mietwagen die Strände im Osten erkunden."],
+["Malta","Malta","🛡️",Y,[3,2,0,2,2,2,1],2,2,4,4,10,1,"Sonne, Tauchen und die Festungsstadt Valletta.","Valletta zu Fuß und Gozo mit der Fähre erkunden."],
+["Dubrovnik","Kroatien","🏰",R,[3,3,1,1,2,2,1],3,2,3,5,10,0,"Stadtmauer, Adria und Filmkulissen.","Die Mauer früh morgens ablaufen."],
+["Bucht von Kotor","Montenegro","⛴️",M,[2,2,3,2,2,1,2],2,2,4,5,10,3,"Fjordartige Bucht mit Bergen und Altstädten.","Den Weg zur Festung über Kotor wandern."],
+["Thessaloniki","Griechenland","🥙",S,[2,3,1,0,3,3,0],1,2,3,4,10,3,"Studentenstadt am Meer mit Streetfood und Bars.","Auf dem Markt Modiano essen gehen."],
+["Santorin & Kykladen","Griechenland","🌅",P,[3,1,1,1,2,2,2],4,3,5,5,10,0,"Weiße Häuser, Sonnenuntergänge und Inselhüpfen.","Auf Nachbarinseln ausweichen, wenn Santorin zu voll ist."],
+["Istanbul","Türkei","🕌",L,[1,3,0,0,3,3,0],2,3,4,4,11,0,"Basare, Moscheen und Fähren über den Bosporus.","Mit der Fähre zwischen Europa und Asien pendeln."],
+["Brüssel & Brügge","Belgien","🍫",Y,[0,3,0,0,3,2,1],3,1,2,4,10,0,"Schokolade, Pommes, Bier und Altstadt wie im Märchen.","Brügge am besten abends nach den Tagesgästen besuchen."],
+["Straßburg & Elsass","Frankreich","🥨",M,[0,2,2,1,3,1,2],3,1,3,4,12,1,"Fachwerk, Weinstraße und Flammkuchen.","Auf der Weinstraße in kleinen Dörfern übernachten."],
+["Lyon","Frankreich","🍽️",R,[0,3,1,1,3,2,1],3,1,3,4,12,1,"Hauptstadt der französischen Küche mit Altstadt.","In einem Bouchon traditionell essen."],
+["Nizza & Côte d'Azur","Frankreich","🌴",S,[3,2,1,1,3,2,1],4,2,4,5,10,0,"Promenade, Meer und Hügeldörfer im Hinterland.","Mit dem Zug zwischen den Küstenorten pendeln."],
+["Bordeaux","Frankreich","🍇",P,[1,3,1,1,3,2,1],3,1,3,4,10,1,"Wein, schöne Altstadt und Atlantik in der Nähe.","Ein Tagesausflug führt in die Dünen von Arcachon."],
+["Bretagne","Frankreich","🌊",S,[2,1,3,2,3,0,3],2,1,4,5,10,2,"Wilde Küste, Leuchttürme und Galettes.","Den Küstenweg GR34 abschnittsweise wandern."],
+["London","England","🎡",R,[0,3,0,0,2,3,0],4,2,3,4,11,0,"Museen, Märkte und Theater, viele Sehenswürdigkeiten gratis.","Viele Museen sind kostenlos, das spart Geld."],
+["Dublin & Westküste","Irland","🍀",M,[0,2,3,2,1,3,2],3,2,4,5,9,1,"Pubs mit Livemusik und grüne Klippenküste.","Die Cliffs of Moher am späten Nachmittag besuchen."],
+["Stockholm","Schweden","🛶",L,[0,3,2,2,2,2,2],4,2,3,5,9,1,"Inseln, Altstadt und Kaffeepausen (Fika).","Mit der Fähre durch den Schärengarten fahren."],
+["Helsinki","Finnland","🧖",Y,[0,2,2,1,2,2,2],3,2,3,5,9,2,"Design, Sauna und Seen in der Nähe.","In einer öffentlichen Sauna am Meer entspannen."],
+["Bergen & Fjorde","Norwegen","🚢",S,[0,2,3,3,1,1,3],4,2,4,5,9,2,"Holzhäuser am Hafen und steile Fjorde.","Mit der Fähre den Sognefjord erkunden."],
+["Riga","Lettland","🎨",P,[0,3,1,0,2,3,1],1,2,3,5,9,3,"Jugendstil-Fassaden, Märkte und günstige Bars.","Den Zentralmarkt in alten Zeppelinhallen besuchen."],
+["Danzig","Pommern, Polen","🛳️",M,[1,3,1,1,2,2,1],1,1,3,5,9,2,"Backstein-Altstadt, Hafen und Ostsee-Strände.","Mit der Bahn nach Sopot an den Strand fahren."],
+["Transsilvanien","Rumänien","🧛",L,[0,2,3,2,2,0,3],1,2,4,5,10,3,"Karpaten, Burgen und mittelalterliche Städte wie Sibiu.","Mit dem Mietwagen von Burg zu Burg fahren."],
+["Luzern & Zentralschweiz","Schweiz","🏔️",Y,[0,2,3,2,2,1,2],4,1,3,5,10,0,"Seen, Bergbahnen und Altstadt mit Holzbrücke.","Preisvorteil nutzen: Wandern ist gratis und die Aussicht ebenso."]
+];
+
+const T={
+"Lissabon":["Mit der Tram 28 durch Alfama und Graça fahren","Torre de Belém und Mosteiro dos Jerónimos besuchen","Alfama, Baixa oder Chiado"],
+"Porto & Douro-Tal":["Portweinkeller in Vila Nova de Gaia besichtigen","Bootsfahrt ins Douro-Tal","Ribeira oder Baixa"],
+"Algarve":["Küstenwanderweg Sete Vales Suspensos bei Carvoeiro","Bootstour zur Benagil-Höhle","Lagos oder Carvoeiro"],
+"Barcelona":["Sagrada Família mit Ticket im Voraus","Park Güell besuchen","Eixample oder Gràcia"],
+"Sevilla":["Real Alcázar besichtigen","Flamenco-Abend im Viertel Triana","Santa Cruz oder Triana"],
+"Mallorca, Serra de Tramuntana":["Wanderung von Deià nach Sóller","Mit der historischen Bahn von Palma nach Sóller","Sóller oder Pollença"],
+"Valencia":["Stadt der Künste und Wissenschaften","Radtour durch den Turia-Park","Ciutat Vella oder Ruzafa"],
+"Rom":["Kolosseum, Forum Romanum und Palatin","Petersdom und Vatikanische Museen","Trastevere oder Monti"],
+"Florenz & Toskana":["Uffizien und Dom mit Kuppelaufstieg","Tagesausflug nach Siena und San Gimignano","Oltrarno oder Altstadt"],
+"Palermo & Sizilien":["Märkte Ballarò und Capo","Tagesausflug zum Tempeltal von Agrigent","Altstadt rund um Kalsa"],
+"Dolomiten":["Wanderung um die Drei Zinnen","Seiser Alm und Langkofel","Kastelruth, Villnöss oder Grödnertal"],
+"Cinque Terre":["Küstenweg zwischen Monterosso und Vernazza","Bootsfahrt an den fünf Dörfern entlang","Monterosso oder La Spezia"],
+"Venedig":["Markusdom und Dogenpalast","Bootstour nach Murano und Burano","Cannaregio oder Dorsoduro"],
+"Split & Dalmatien":["Diokletianpalast","Ausflug zu den Krka-Wasserfällen","Altstadt von Split oder Trogir"],
+"Istrien":["Trüffelverkostung bei Motovun","Altstadt von Rovinj und Amphitheater in Pula","Rovinj oder Motovun"],
+"Prag":["Prager Burg und Veitsdom","Altstädter Ring mit Astronomischer Uhr","Altstadt oder Malá Strana"],
+"Budapest":["Széchenyi-Thermalbad","Fischerbastei und Burgviertel","Innenstadt (Pest) oder Burgviertel"],
+"Wien":["Schloss Schönbrunn","Kaffeehaus-Besuch im Café Central","Innere Stadt oder Neubau"],
+"Krakau":["Salzbergwerk Wieliczka","Wawel-Schloss und Marktplatz","Altstadt oder Kazimierz"],
+"Amsterdam":["Rijksmuseum und Van-Gogh-Museum","Grachtenfahrt","Jordaan oder Grachtengürtel"],
+"Kopenhagen":["Nyhavn und Hafenbäder","Tivoli-Vergnügungspark","Indre By oder Vesterbro"],
+"Island, Südküste":["Golden Circle mit Gullfoss und Geysir","Besuch einer heißen Quelle wie Sky Lagoon","Reykjavik oder Selfoss"],
+"Lofoten":["Wanderung auf den Reinebringen","Boots- oder Kajaktour ab Svolvær","Reine oder Svolvær"],
+"Schottische Highlands":["Wanderung durch Glencoe","Isle of Skye mit Old Man of Storr","Fort William oder Inverness"],
+"Edinburgh":["Edinburgh Castle","Aufstieg auf den Arthur's Seat","Old Town oder New Town"],
+"Kreta":["Samaria-Schlucht","Palast von Knossos","Chania oder Rethymno"],
+"Athen":["Akropolis und Akropolis-Museum","Bummel durch Plaka und Monastiraki","Plaka oder Koukaki"],
+"Salzburger Land":["Festung Hohensalzburg","Eisriesenwelt bei Werfen","Altstadt Salzburg oder Zell am See"],
+"Provence":["Lavendelfelder bei Valensole (Juni und Juli)","Papstpalast in Avignon","Avignon oder Aix-en-Provence"],
+"Paris":["Louvre und Musée d'Orsay","Eiffelturm und Spaziergang an der Seine","Le Marais oder Quartier Latin"],
+"Rügen":["Kreidefelsen im Nationalpark Jasmund","Radtour über die Insel","Binz oder Sassnitz"],
+"Tallinn":["Altstadt und Domberg","Kadriorg-Park","Altstadt oder Kalamaja"],
+"Ljubljana & Bled":["Burg von Ljubljana","Insel im Bleder See","Altstadt Ljubljana oder Bled"],
+"Madrid":["Prado und Reina-Sofía-Museum","Retiro-Park","Centro oder Salamanca"],
+"Granada":["Alhambra mit Ticket im Voraus","Spaziergang durch Albaicín","Albaicín oder Centro"],
+"San Sebastián":["Pintxos-Tour in der Altstadt","Strand La Concha","Parte Vieja oder Gros"],
+"Málaga & Costa del Sol":["Alcazaba und Picasso-Museum","Strandtag an La Malagueta","Centro Histórico oder Soho"],
+"Teneriffa":["Teide-Nationalpark","Wanderung im Anaga-Gebirge","La Laguna oder Puerto de la Cruz"],
+"Madeira":["Levada-Wanderung zum Caldeirão Verde","Sonnenaufgang am Pico do Arieiro","Funchal"],
+"Neapel & Amalfiküste":["Pompeji und Vesuv","Amalfiküste mit Positano","Neapel Altstadt oder Sorrent"],
+"Mailand & Comer See":["Dom mit Dachterrasse","Fähre nach Bellagio","Brera oder Navigli"],
+"Bologna & Emilia-Romagna":["Kochkurs für frische Pasta","Aufstieg auf den Torre degli Asinelli","Altstadt"],
+"Verona & Gardasee":["Arena di Verona","Bootsfahrt zur Halbinsel Sirmione","Altstadt oder Sirmione"],
+"Bari & Apulien":["Trulli-Häuser in Alberobello","Polignano a Mare","Bari Vecchia oder Lecce"],
+"Sardinien":["Cala Goloritzé oder Costa Smeralda","Nuraghe Su Nuraxi","Alghero oder Cagliari"],
+"Malta":["Valletta und St. John's Co-Kathedrale","Boot zur Blauen Grotte","Valletta oder Sliema"],
+"Dubrovnik":["Stadtmauer","Seilbahn auf den Berg Srđ","Altstadt oder Lapad"],
+"Bucht von Kotor":["Aufstieg zur Festung San Giovanni","Altstadt von Perast","Kotor oder Perast"],
+"Thessaloniki":["Weißer Turm","Markt Modiano","Zentrum oder Ladadika"],
+"Santorin & Kykladen":["Wanderung von Fira nach Oia","Sonnenuntergang in Oia","Imerovigli oder Oia"],
+"Istanbul":["Hagia Sophia und Blaue Moschee","Fährfahrt auf dem Bosporus","Sultanahmet oder Karaköy"],
+"Brüssel & Brügge":["Grand Place","Grachtenfahrt in Brügge","Zentrum Brüssel oder Altstadt Brügge"],
+"Straßburg & Elsass":["Münster","Bootsfahrt durch Petite France","Petite France oder Altstadt"],
+"Lyon":["Basilika Notre-Dame de Fourvière","Essen in einem Bouchon","Presqu'île oder Vieux Lyon"],
+"Nizza & Côte d'Azur":["Promenade des Anglais","Altstadt und Markt Cours Saleya","Altstadt oder Hafen"],
+"Bordeaux":["Weinverkostung in Saint-Émilion","Dune du Pilat","Zentrum oder Chartrons"],
+"Bretagne":["Küstenwanderung auf dem GR34","Altstadt von Saint-Malo","Saint-Malo oder Quimper"],
+"London":["British Museum","Tower of London und Tower Bridge","South Bank oder Covent Garden"],
+"Dublin & Westküste":["Guinness Storehouse","Cliffs of Moher","Stadtzentrum oder Ranelagh"],
+"Stockholm":["Vasa-Museum","Ausflug in den Schärengarten","Gamla Stan oder Södermalm"],
+"Helsinki":["Festung Suomenlinna","Öffentliche Sauna Löyly","Kamppi oder Kallio"],
+"Bergen & Fjorde":["Fløibanen-Seilbahn","Fjordtour nach Flåm","Bryggen oder Zentrum"],
+"Riga":["Jugendstilviertel","Zentralmarkt","Altstadt oder Jugendstilviertel"],
+"Danzig":["Langer Markt","Museum des Zweiten Weltkriegs","Altstadt"],
+"Transsilvanien":["Schloss Bran","Altstädte von Brașov und Sibiu","Brașov oder Sibiu"],
+"Luzern & Zentralschweiz":["Kapellbrücke","Bergbahn auf den Pilatus","Altstadt oder Seeufer"]
+};
+
+const Q=[
+{g:"Zeit",q:"Wann möchtest du reisen?",o:[["Winter, November bis Januar",{m:12}],["Frühling, Februar bis April",{m:3}],["Frühsommer, Mai und Juni",{m:6}],["Hochsommer, Juli und August",{m:7}],["Herbst, September und Oktober",{m:9}]]},
+{g:"Begleitung",q:"Mit wem reist du?",o:[["Allein",{t:1,a:1,co:"allein"}],["Als Paar",{r:1,e:1,co:"paar"}],["Mit Freunden",{p:2,co:"freunde"}],["Mit der Familie",{s:1,r:1,p:-1,co:"familie"}]]},
+{g:"Reisedauer",q:"Wie lange bist du unterwegs?",o:[["Kurztrip, 2 bis 4 Tage",{days:3}],["Eine Woche",{days:7}],["Zwei Wochen oder länger",{days:14}]]},
+{g:"Budget",q:"Wie viel darfst du insgesamt ausgeben, inklusive Anreise?",o:[["Bis 300 €",{bud:250}],["300 bis 800 €",{bud:600}],["800 bis 1.500 €",{bud:1100}],["Über 1.500 €",{bud:1800}]]},
+{g:"Budget",q:"Wo möchtest du übernachten?",o:[["Camping oder Zelten",{stay:1.3,st:"camp"}],["Hostel",{stay:1.3,st:"hostel"}],["Ferienwohnung",{stay:1,st:"apt"}],["Einfaches Hotel oder Pension",{stay:1,st:"hotel"}],["Komfortables Hotel",{stay:.8,st:"luxus"}]]},
+{g:"Anreise",q:"Wie weit darf die Anreise dauern?",o:[["Zug oder Auto, bis etwa 8 Stunden",{dist:1}],["Kurzflug, bis etwa 2,5 Stunden",{dist:2}],["Auch längere Flüge sind okay",{dist:3}]]},
+{g:"Reisestil",q:"Wie sieht dein perfekter Urlaubstag aus?",o:[["Strand und Wasser",{s:3}],["Stadt und Kultur",{t:3}],["Natur und Outdoor",{na:3,a:2}],["Abenteuer und Extremsport",{a:3,na:1}]]},
+{g:"Wetter",q:"Welches Wetter wünschst du dir?",o:[["Heiß und sonnig",{s:3}],["Mild und angenehm",{s:1,t:1}],["Eher kühl, frische Luft",{na:2}],["Egal, Hauptsache etwas erleben",{}]]},
+{g:"Essen",q:"Wie wichtig ist dir das Essen vor Ort?",o:[["Sehr wichtig, ich probiere gern Regionales",{e:3,fd:1}],["Ganz nett, aber nicht entscheidend",{e:1}],["Unwichtig",{}]]},
+{g:"Abend",q:"Wie verbringst du am liebsten den Abend?",o:[["In einer Bar oder im Club",{p:3,eve:"bar"}],["Im Restaurant mit gutem Essen",{e:2,t:1,eve:"resto"}],["Mit Sonnenuntergang am Meer",{s:2,r:1,eve:"sunset"}],["Ruhig in der Natur",{na:2,r:2,eve:"natur"}]]},
+{g:"Wasser",q:"Welches Gewässer reizt dich am meisten?",o:[["Das Meer",{s:2,wa:"meer"}],["Ein Bergsee",{na:2,a:1,wa:"see"}],["Ein Fluss mitten in der Stadt",{t:1,wa:"fluss"}],["Ist mir nicht wichtig",{wa:"egal"}]]},
+{g:"Sehenswertes",q:"Was möchtest du unterwegs ansehen?",o:[["Kultur und Geschichte",{t:2,sig:"kultur"}],["Stadtleben und Genuss",{t:1,e:1,p:1,sig:"markt"}],["Natur und Landschaft",{na:2,sig:"natur"}],["Ruhe und Erholung",{r:2,sig:"relax"}]]},
+{g:"Aktivität",q:"Welche Art von Aktivitäten reizt dich am meisten?",o:[["Natur und Outdoor",{na:2,a:2,act:"natur"}],["Abenteuer und Extremsport",{a:3,na:1,act:"extrem"}],["Tourismus und Kultur",{t:2,e:1,act:"tourismus"}],["Erholung und Wellness",{r:2,e:1,act:"erholung"}],["Geselligkeit und Feiern",{p:2,t:1,act:"gesellig"}]]},
+{g:"Menschenmassen",q:"Wie sehr stören dich viele Touristen?",o:[["Gar nicht, Hauptsache etwas los",{p:1}],["Ein bisschen",{r:1}],["Sehr, ich möchte Ruhe",{r:3}]]},
+{g:"Bekanntheit",q:"Klassiker oder Geheimtipp?",o:[["Ein bekannter Klassiker",{hid:0}],["Eine Mischung aus beidem",{hid:1.5}],["Ein Geheimtipp abseits der Menge",{hid:3}]]},
+{g:"Tempo",q:"Wie reist du am liebsten?",o:[["Viel sehen, jeden Tag etwas Neues",{t:2,a:1}],["Entspannt, mit viel Zeit zum Nichtstun",{s:2,r:1}]]}
+];
+
+const $=id=>document.getElementById(id);
+let i,u;
+const show=id=>{["start","quiz","result"].forEach(s=>$(s).hidden=s!==id);window.scrollTo(0,0)};
+function start(){i=0;u={v:[0,0,0,0,0,0,0],m:6,days:7,bud:600,stay:1,dist:2,hid:1.5,st:"hotel",co:"",act:"",eve:"",sig:"",wa:"",fd:0};
+  $("segs").innerHTML=Q.map(()=>"<i></i>").join("");show("quiz");ask()}
+function ask(){
+  const q=Q[i];
+  [...$("segs").children].forEach((el,n)=>el.className=n<=i?"on":"");
+  $("tag").textContent=q.g+" · "+(i+1)+"/"+Q.length;
+  $("q").textContent=q.q;
+  const box=$("opts");box.innerHTML="";
+  q.o.forEach(([txt,pts])=>{
+    const b=document.createElement("button");b.className="opt";b.textContent=txt;
+    b.onclick=()=>{for(const k in pts){k in K?u.v[K[k]]+=pts[k]:u[k]=pts[k]}
+      ++i<Q.length?ask():finish()};
+    box.appendChild(b);
+  });
+}
+
+// Passende Links je nach Antworten (Suchen bei Google Maps zeigen aktuelle Bewertungen)
+const gm=q=>"https://www.google.com/maps/search/"+encodeURIComponent(q);
+const gs=q=>"https://www.google.com/search?q="+encodeURIComponent(q);
+function links(d){
+  const n=d[0], L=[];
+  const add=(t,url)=>{if(!L.some(x=>x[0]===t))L.push([t,url])};
+  // Unterkunft nach Wunsch
+  const st={camp:["Campingplätze in "+n+" mit Bewertungen",gm("Campingplatz "+n)],
+    hostel:["Hostels in "+n+" mit Bewertungen",gm("Hostel "+n)],
+    apt:["Ferienwohnungen in "+n+" ansehen",gm("Ferienwohnung "+n)],
+    hotel:["Einfache Hotels und Pensionen in "+n,gm("Pension günstiges Hotel "+n)],
+    luxus:["Gut bewertete Hotels in "+n+" ansehen",gm("beste Hotels "+n)]}[u.st];
+  if(st)add(st[0],st[1]);
+  // Anreise
+  add(u.dist===1?"Zug- und Autoverbindung nach "+n:"Flüge nach "+n+" vergleichen",
+      u.dist===1?gs("Zugverbindung nach "+n+" ab Deutschland"):"https://www.google.com/travel/flights?q="+encodeURIComponent("Flüge nach "+n));
+  // Aktivität
+  const act={natur:["Wanderwege und Naturerlebnisse bei "+n,gm("Wanderwege Naturpark "+n)],
+    extrem:["Abenteuer- und Outdoor-Aktivitäten in "+n,gm("Abenteuer Outdoor Aktivitäten "+n)],
+    tourismus:["Top-Sehenswürdigkeiten und Touren in "+n,gm("Sehenswürdigkeiten Stadtführung "+n)],
+    erholung:["Thermen, Spas und Cafés in "+n,gm("Therme Spa Café "+n)],
+    gesellig:["Ausgehviertel und Veranstaltungen in "+n,gm("Ausgehviertel Veranstaltungen "+n)]}[u.act];
+  if(act)add(act[0],act[1]);
+  // Abend / Essen
+  const ev={bar:["Bars und Clubs in "+n,gm("Bars Clubs "+n)],
+    resto:["Gut bewertete Restaurants in "+n,gm("beste Restaurants "+n)],
+    sunset:["Aussichtspunkte für den Sonnenuntergang in "+n,gm("Sonnenuntergang Aussichtspunkt "+n)],
+    natur:["Ruhige Naturorte bei "+n,gm("Naturpark ruhige Orte "+n)]}[u.eve];
+  if(ev)add(ev[0],ev[1]);
+  if(u.fd)add("Regionale Küche und Lokale in "+n,gm("traditionelle regionale Küche "+n));
+  // Sehenswertes
+  const sg={kultur:["Museen und historische Orte in "+n,gm("Museen historische Orte "+n)],
+    markt:["Märkte und Streetfood in "+n,gm("Markt Streetfood "+n)],
+    natur:["Aussichten und Naturerlebnisse bei "+n,gm("Aussichtspunkt Natur "+n)],
+    relax:["Ruhige Plätze zum Abschalten in "+n,gm("ruhige Orte Park "+n)]}[u.sig];
+  if(sg)add(sg[0],sg[1]);
+  // Wasser
+  if(u.wa==="meer")add("Strände bei "+n,gm("Strand "+n));
+  if(u.wa==="see")add("Badeseen und Bergseen bei "+n,gm("Badesee Bergsee "+n));
+  // Begleitung
+  if(u.co==="familie")add("Familienfreundliche Ausflüge in "+n,gm("Familie Kinder Ausflug "+n));
+  if(u.co==="paar")add("Romantische Orte in "+n,gm("romantische Orte "+n));
+  if(u.co==="allein")add("Geführte Touren für Alleinreisende in "+n,gm("Stadtführung Tour "+n));
+  if(u.co==="freunde")add("Gruppenaktivitäten in "+n,gm("Aktivitäten Gruppe "+n));
+  return L.slice(0,6);
+}
+function rank(){
+  const mx=Math.max(1,...u.v);
+  const want=u.v.map(x=>Math.min(3,Math.max(0,x/mx*3))*.85+.4);
+  const imp=want.map(w=>w+.6), tot=imp.reduce((a,b)=>a+b,0)*3;
+  const perDay=Math.round(u.bud/u.days*u.stay);
+  const al=perDay<60?1:perDay<100?2:perDay<150?3:4;
+  const sc=D.map(d=>{
+    const v=d[4],n=[];
+    let dist=0;v.forEach((x,k)=>dist+=imp[k]*Math.abs(want[k]-x));
+    let p=100*(1-dist/tot);
+    if(d[5]>al){p-=(d[5]-al)*5;n.push("Die Preisstufe liegt über deinem Tagesbudget von etwa "+perDay+" €.")}
+    if(d[6]>u.dist){p-=(d[6]-u.dist)*7;n.push("Die Anreise dauert länger, als du wolltest.")}
+    if(u.m<d[8]||u.m>d[9]){p-=6;n.push("Dein Reisemonat liegt außerhalb der besten Zeit ("+MN[d[8]-1]+" bis "+MN[d[9]-1]+").")}
+    if(u.days<d[7]){p-=Math.min(6,(d[7]-u.days)*2);n.push("Für diesen Ort wären eher "+d[7]+" Tage sinnvoll.")}
+    p-=Math.abs(d[10]-u.hid)*2;
+    return {d,n,p:Math.max(71,Math.min(99,Math.round(71+(p-50)*28/49)))};
+  }).sort((a,b)=>b.p-a.p);
+  return {sc,want,perDay}}
+function finish(){
+  const {sc,want,perDay}=rank();
+  const top=want.map((w,k)=>[w,k]).sort((x,y)=>y[0]-x[0]).filter(x=>x[0]>=1).slice(0,3).map(x=>DIM[x[1]]);
+  $("rProf").textContent="Dein Profil: "+(top.length?top.join(", "):"ausgeglichen, ohne klaren Schwerpunkt")+". Hier sind deine drei besten Ziele:";
+  $("tops").innerHTML="";
+  sc.slice(0,3).forEach((b,r)=>{
+    const d=b.d, el=document.createElement("div");
+    el.className="post";el.style.marginBottom="28px";if(r%2)el.style.transform="rotate(1deg)";
+    el.innerHTML="<div class='hd'><div><p class='land'></p><div class='dest'></div></div><div class='emo'></div></div><div class='bd'><div class='stamp'><b></b>Treffer</div><p class='why'></p><div class='wr'></div><h3>Passung im Detail</h3><div class='bars'></div><div class='leg'>Roter Balken: Ausprägung der Eigenschaft am Reiseziel. Dunkler Strich: Gewichtung der Eigenschaft nach den Antworten des Nutzers. Je geringer der Abstand, desto höher die Übereinstimmung.</div><h3>Praktisches</h3><p class='info'></p><h3>Konkrete Tipps</h3><ul class='tp'></ul><h3>Passende Links für dich</h3><div class='lks'></div></div>";
+    const q=c=>el.querySelector(c);
+    q(".hd").style.setProperty("background",d[3]);
+    q(".land").textContent="Platz "+(r+1)+" · "+d[1];q(".dest").textContent=d[0];q(".emo").textContent=d[2];
+    q(".stamp b").textContent=b.p+"%";
+    const fits=want.map((w,k)=>[w,k]).filter(x=>x[0]>=1.5&&d[4][x[1]]>=2).map(x=>DIM[x[1]]);
+    q(".why").textContent=d[11]+(fits.length?" Passt vor allem bei: "+fits.join(", ")+".":" Ein solider Allrounder für dein Profil.");
+    b.n.forEach(t=>{const w=document.createElement("div");w.className="warn";w.textContent="Achtung: "+t;q(".wr").appendChild(w)});
+    q(".bars").innerHTML=DIM.map((nm,k)=>"<div class='pr'><span>"+nm.replace("&","&amp;")+"</span><div class='tr'><i style='width:"+d[4][k]/3*100+"%'></i><u style='left:calc("+want[k]/3*100+"% - 2px)'></u></div></div>").join("");
+    q(".info").textContent="Beste Reisezeit: "+MN[d[8]-1]+" bis "+MN[d[9]-1]+". Dein Budget: etwa "+perDay+" € pro Tag bei "+u.days+" Tagen (grobe Rechnung). Tipp: "+d[12];
+    const t=T[d[0]]||[];
+    q(".tp").innerHTML="<li></li><li></li><li></li>";const li=el.querySelectorAll(".tp li");
+    li[0].textContent="Aktivität: "+t[0];li[1].textContent="Aktivität: "+t[1];li[2].textContent="Gute Lage zum Übernachten: "+t[2];
+    links(d).forEach(([t,url])=>{const a=document.createElement("a");a.className="lk";a.href=url;a.target="_blank";a.rel="noopener";a.textContent=t;q(".lks").appendChild(a)});
+    $("tops").appendChild(el);
+  });
+  $("alts").innerHTML="";
+  sc.slice(3,6).forEach((x,k)=>{
+    const el=document.createElement("div");el.className="box rk";
+    el.innerHTML="<div class='emo'></div><div><b></b><span></span></div><div class='pct'></div>";
+    el.querySelector(".emo").textContent=x.d[2];
+    el.querySelector("b").textContent=(k+4)+". "+x.d[0]+" ("+x.d[1]+")";
+    el.querySelector("span").textContent=x.n.length?x.n[0]:x.d[11];
+    el.querySelector(".pct").textContent=x.p+"%";
+    $("alts").appendChild(el);
+  });
+  show("result");
+}
+$("go").onclick=start;$("again").onclick=start;
+</script>
+</body>
+</html>
